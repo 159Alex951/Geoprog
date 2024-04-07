@@ -1,0 +1,73 @@
+class Punkt:
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+    
+    def __str__(self):
+        return f"({self.x}, {self.y})"
+
+
+class Figur:
+    def __init__(self, name="Figur"):
+        self.name = name
+    
+    def umfang(self):
+        return 0
+    
+    def __str__(self):
+        return self.name
+
+
+class Kreis(Figur):
+    def __init__(self, mittelpunkt, radius):
+        super().__init__("Kreis")
+        self.mittelpunkt = mittelpunkt
+        self.radius = radius
+    
+    def umfang(self):
+        return 2 * 3.141592653589793 * self.radius
+    
+    def __str__(self):
+        return f"{self.name} M={self.mittelpunkt} r={self.radius}"
+
+
+class Rechteck(Figur):
+    def __init__(self, ecke1, ecke2):
+        super().__init__("Rechteck")
+        self.ecke1 = ecke1
+        self.ecke2 = ecke2
+    
+    def umfang(self):
+        return 2 * (abs(self.ecke1.x - self.ecke2.x) + abs(self.ecke1.y - self.ecke2.y))
+    
+    def __str__(self):
+        return f"{self.name} {self.ecke1} – {self.ecke2}"
+
+
+class Dreieck(Figur):
+    def __init__(self, punkt1, punkt2, punkt3):
+        super().__init__("Dreieck")
+        self.punkt1 = punkt1
+        self.punkt2 = punkt2
+        self.punkt3 = punkt3
+    
+    def umfang(self):
+        seite1 = ((self.punkt1.x - self.punkt2.x) ** 2 + (self.punkt1.y - self.punkt2.y) ** 2) ** 0.5
+        seite2 = ((self.punkt2.x - self.punkt3.x) ** 2 + (self.punkt2.y - self.punkt3.y) ** 2) ** 0.5
+        seite3 = ((self.punkt3.x - self.punkt1.x) ** 2 + (self.punkt3.y - self.punkt1.y) ** 2) ** 0.5
+        return seite1 + seite2 + seite3
+    
+    def __str__(self):
+        return f"{self.name} {self.punkt1}, {self.punkt2}, {self.punkt3}"
+
+
+class Polygon(Figur):
+    def __init__(self, punkte=[]):
+        super().__init__("Polygon")
+        self.punkte = punkte
+    
+    def umfang(self):
+        umfang = 0
+        for i in range(len(self.punkte)):
+            j = (i + 1) % len(self.punkte)  # Nächster Punkt (zyklisch)
+            umfang += ((self.punkte[i].x - self.punkte[j].x) ** 2 + (self.punkte[i].y - self.punkte[j].y) ** 2) ** 0.5
