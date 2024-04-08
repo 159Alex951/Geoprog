@@ -1,0 +1,14 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <script>
+
+   
+        for(let x = 0; x < 100; x++) {
+            document.writeln(x);
+        }
+
+         </script>
+    </body>
+</html>
