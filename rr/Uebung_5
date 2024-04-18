@@ -1,0 +1,92 @@
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QUrl, QLocale
+from PyQt5.QtGui import QDesktopServices, QAction
+from PyQt5.QtCore import QDate
+import urllib.parse
+
+class Fenster(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.createLayout()
+        self.createConnect()
+
+    def createLayout(self):
+        ## Fenstertitel / Layout
+        self.setWindowTitle("GUI Programmierung")
+        layout = QFormLayout()
+        self.setMinimumSize(800,200)
+
+        ## Zentrierung der Widgets
+        center = QWidget()
+        center.setLayout(layout)
+        self.setCentralWidget(center)
+        
+        ## Widgets erstellen
+        self.vorname = QLineEdit()
+        self.nachname = QLineEdit()
+        self.bday = QDateEdit()
+        self.bday.setDisplayFormat("dd/MM/yyyy")
+        self.adr = QLineEdit()
+        self.plz = QLineEdit()
+        self.ort = QLineEdit()
+        self.land = QComboBox()
+        self.land.addItems(["Schweiz", "Deutschland", "Österreich", "andere"])
+        self.savek = QPushButton("Save")
+        self.showMapButton = QPushButton("Auf Karte zeigen")  # Neuer Button
+        self.loadButton = QPushButton("Laden")  # Neuer Button
+
+        ## Layout füllen
+        layout.addRow("Vorname:", self.vorname)
+        layout.addRow("Nachname:", self.nachname)
+        layout.addRow("Geburtstag:", self.bday)
+        layout.addRow("Adresse:", self.adr)
+        layout.addRow("PLZ:", self.plz)
+        layout.addRow("Ortschaft:", self.ort)
+        layout.addRow("Land:", self.land)
+        layout.addRow(self.savek)
+        layout.addRow(self.showMapButton)
+        layout.addRow(self.loadButton)
+
+        ## Menueleiste
+        menubar = self.menuBar()
+        filemenu = menubar.addMenu("File")
+        viewMenu = menubar.addMenu("View")  # Neues Menü für Karte
+
+        self.save = QAction("Save", self)
+        self.load = QAction("Load", self)  # Laden Aktion
+        self.quit = QAction("Quit", self)
+        self.showMap = QAction("Karte...", self)  # Aktion zum Karte anzeigen
+
+        filemenu.addAction(self.save)
+        filemenu.addAction(self.load)
+        filemenu.addAction(self.quit)
+        viewMenu.addAction(self.showMap)
+
+        ## Fenster anzeigen
+        self.show()
+
+    def createConnect(self):
+        self.quit.triggered.connect(self.close)
+        self.save.triggered.connect(self.speicher)
+        self.load.triggered.connect(self.laden)  # Verbindung zum Laden
+        self.showMap.triggered.connect(self.aufKarteZeigen)  # Karte zeigen
+        self.showMapButton.clicked.connect(self.aufKarteZeigen)
+        self.savek.clicked.connect(self.speicher)
+        self.loadButton.clicked.connect(self.laden)
+
+    def speicher(self):
+        export = f"{self.vorname.text()},{self.nachname.text()},{self.bday.text()},{self.adr.text()},{self.plz.text()},{self.ort.text()},{self.land.currentText()}"
+        filepath, _ = QFileDialog.getSaveFileName(self, "Datei speichern", "", "Text Files (*.txt)")
+        if filepath:
+            with open(filepath, "w") as f:
+                f.write(export)
+
+    def aufKarteZeigen(self):
+        addr = f"{self.adr.text()} {self.plz.text()} {self.ort.text()} {self.land.currentText()}"
+        query = urllib.parse.quote(addr)
+        link = f"https://www.google.ch/maps/place/{query}"
+        QDesktopServices.openUrl(QUrl(link))
+
+    def laden(self):
+       
