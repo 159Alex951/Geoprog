@@ -89,4 +89,24 @@ class Fenster(QMainWindow):
         QDesktopServices.openUrl(QUrl(link))
 
     def laden(self):
+        filepath, _ = QFileDialog.getOpenFileName(self, "Datei öffnen", "", "Text Files (*.txt)")
+        if filepath:
+            with open(filepath, "r") as f:
+                data = f.read().split(',')
+                if len(data) == 7:  # Stellen Sie sicher, dass die Datenstruktur wie erwartet ist
+                    self.vorname.setText(data[0])
+                    self.nachname.setText(data[1])
+                    
+                    # Umwandlung des Datums in das korrekte Format
+                    dformat = QLocale().dateFormat(format=QLocale.FormatType.ShortFormat)
+                    self.bday.setDate(QDate.fromString(data[2], "dd/MM/yyyy"))
+                    
+                    self.adr.setText(data[3])
+                    self.plz.setText(data[4])
+                    self.ort.setText(data[5])
+                    
+                    # Auswahl des Landes im QComboBox
+                    index = self.land.findText(data[6], Qt.MatchFixedString)
+                    if index >= 0:
+                        self.land.setCurrentIndex(index)
        
